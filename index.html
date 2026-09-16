@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prompt Workshop — for Enjoy AI Town</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#171A2B;
+    --bg-panel:#1F2338;
+    --ink:#F3EDE0;
+    --ink-dim:#A9ADC7;
+    --gold:#F2A65A;
+    --rose:#E8637A;
+    --line:#333A5C;
+    --parchment:#F3EAD8;
+    --parchment-ink:#241C15;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(circle at 15% 0%, rgba(242,166,90,0.10), transparent 45%),
+      radial-gradient(circle at 90% 20%, rgba(232,99,122,0.08), transparent 40%),
+      var(--bg);
+    color:var(--ink);
+    font-family:'Manrope', sans-serif;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+  }
+  .app{
+    width:100%;
+    max-width:640px;
+    padding:36px 20px 64px;
+  }
+  header{
+    display:flex;
+    align-items:flex-start;
+    gap:14px;
+    margin-bottom:28px;
+  }
+  .lantern{
+    flex:none;
+    width:34px;
+    height:34px;
+    margin-top:4px;
+  }
+  h1{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-weight:600;
+    font-size:clamp(26px, 6vw, 32px);
+    margin:0 0 4px;
+    line-height:1.15;
+    letter-spacing:-0.01em;
+  }
+  header p{
+    margin:0;
+    color:var(--ink-dim);
+    font-size:14.5px;
+    line-height:1.5;
+    max-width:46ch;
+  }
+  nav.tabs{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-bottom:26px;
+  }
+  nav.tabs button{
+    font-family:'Manrope', sans-serif;
+    font-weight:700;
+    font-size:13.5px;
+    color:var(--ink-dim);
+    background:transparent;
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:8px 16px;
+    cursor:pointer;
+    transition:background .15s ease, color .15s ease, border-color .15s ease;
+  }
+  nav.tabs button.active{
+    background:var(--gold);
+    border-color:var(--gold);
+    color:#241C15;
+  }
+  .panel{display:none;}
+  .panel.active{display:block;}
+  .field{margin-bottom:20px;}
+  .field-head{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    margin-bottom:9px;
+  }
+  .field-head span.label{
+    font-weight:700;
+    font-size:14.5px;
+    color:var(--ink);
+  }
+  .field-head span.hint{
+    font-size:12px;
+    color:var(--ink-dim);
+  }
+  .chips{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  .chip{
+    font-family:'Manrope', sans-serif;
+    font-size:13px;
+    font-weight:600;
+    color:var(--ink-dim);
+    background:var(--bg-panel);
+    border:1px solid var(--line);
+    border-radius:9px;
+    padding:7px 12px;
+    cursor:pointer;
+    text-align:left;
+    line-height:1.3;
+    transition:border-color .15s ease, color .15s ease, background .15s ease;
+  }
+  .chip:hover{border-color:#4b527a;}
+  .chip.active{
+    border-color:var(--rose);
+    background:rgba(232,99,122,0.16);
+    color:var(--ink);
+  }
+  .actions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin:26px 0 30px;
+  }
+  .btn{
+    font-family:'Manrope', sans-serif;
+    font-weight:800;
+    font-size:14px;
+    border-radius:10px;
+    padding:12px 18px;
+    cursor:pointer;
+    border:1px solid transparent;
+  }
+  .btn-primary{
+    background:var(--gold);
+    color:#241C15;
+  }
+  .btn-primary:active{transform:translateY(1px);}
+  .btn-ghost{
+    background:transparent;
+    border:1px dashed var(--line);
+    color:var(--ink-dim);
+  }
+  .btn-ghost:hover{color:var(--ink); border-color:#4b527a;}
+
+  .output-wrap{position:relative;}
+  .output-label{
+    font-size:12.5px;
+    color:var(--ink-dim);
+    margin-bottom:10px;
+  }
+  .output-card{
+    background:var(--parchment);
+    color:var(--parchment-ink);
+    border-radius:6px;
+    padding:22px 22px 54px;
+    box-shadow:0 14px 30px rgba(0,0,0,0.35);
+    transform:rotate(-0.35deg);
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-size:16.5px;
+    line-height:1.65;
+    position:relative;
+    min-height:64px;
+    white-space:pre-line;
+  }
+  .output-card.empty{
+    color:#8a7c66;
+    font-style:italic;
+  }
+  .copy-btn{
+    position:absolute;
+    right:16px;
+    bottom:16px;
+    background:#241C15;
+    color:var(--parchment);
+    border:none;
+    border-radius:8px;
+    font-family:'Manrope', sans-serif;
+    font-weight:700;
+    font-size:12.5px;
+    padding:8px 13px;
+    cursor:pointer;
+    transform:rotate(0.35deg);
+  }
+  .copy-btn.copied{background:#3d6b4f;}
+
+  footer{
+    margin-top:30px;
+    font-size:12.5px;
+    color:var(--ink-dim);
+    line-height:1.6;
+  }
+
+  @media (max-width:420px){
+    .actions{flex-direction:column;}
+    .btn{width:100%; text-align:center;}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header>
+    <svg class="lantern" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="17" cy="17" rx="9" ry="11" stroke="#F2A65A" stroke-width="1.6"/>
+      <path d="M17 2V6M17 28V32M8 17H4M30 17H26" stroke="#F2A65A" stroke-width="1.6" stroke-linecap="round"/>
+      <circle cx="17" cy="17" r="3.4" fill="#F2A65A"/>
+    </svg>
+    <div>
+      <h1>Prompt Workshop</h1>
+      <p>Build ready-to-paste prompts for Enjoy AI Town — characters, locations, pets, and roleplay openers, assembled from pieces you pick or let it pick for you.</p>
+    </div>
+  </header>
+
+  <nav class="tabs" id="tabs"></nav>
+
+  <div id="panels"></div>
+
+  <div class="actions">
+    <button class="btn btn-ghost" id="surpriseBtn">Surprise me</button>
+    <button class="btn btn-primary" id="generateBtn">Generate prompt</button>
+  </div>
+
+  <div class="output-wrap">
+    <div class="output-label">Ready to paste into Enjoy</div>
+    <div class="output-card empty" id="output">Pick a few details above, or hit Surprise me — your prompt will show up here.</div>
+    <button class="copy-btn" id="copyBtn">Copy</button>
+  </div>
+
+  <footer>Works for character bios, world/location descriptions, pet companions, and scene-starter prompts. Nothing here is saved — refresh and it resets.</footer>
+</div>
+
+<script>
+const DATA = {
+  character: {
+    label: "Character",
+    fields: [
+      { key:"archetype", label:"Archetype", hint:"pick one", max:1, options:[
+        "reformed rival", "quietly formidable guardian", "charming con artist gone straight",
+        "reclusive artist with a cult following", "disgraced idol staging a comeback",
+        "mad inventor with more sparks than sense", "wanderer who's outlived three names",
+        "healer who refuses to be thanked"
+      ]},
+      { key:"traits", label:"Personality", hint:"pick up to 3", max:3, options:[
+        "fiercely loyal once you've earned it", "allergic to sincerity", "chaotic optimist",
+        "quietly observant", "competitive to a fault", "hopeless romantic in denial",
+        "dry, deadpan wit", "overprotective of small things", "collects grudges like souvenirs",
+        "impossible to rattle"
+      ]},
+      { key:"voice", label:"Voice", hint:"pick one", max:1, options:[
+        "clipped and formal", "warm and rambling", "blunt, economical",
+        "playful and teasing", "old-world, faintly archaic", "soft-spoken but unshakeable"
+      ]},
+      { key:"hook", label:"Hidden hook", hint:"pick one", max:1, options:[
+        "running from a life they used to have in another city",
+        "searching for someone who disappeared without a word",
+        "carrying a promise they already broke once",
+        "recently walked away from power they used to want badly",
+        "convinced they're cursed, and half-right",
+        "the last of a family line nobody else remembers",
+        "keeping a debt secret from everyone who trusts them",
+        "still writing letters to someone who'll never read them"
+      ]}
+    ],
+    template: (v) => `A ${v.archetype}, ${v.traits.join(", ")}, speaking in a ${v.voice} tone. Underneath it all, ${v.hook}. Design their name, look, and backstory around that contradiction — someone who feels fully real the moment we meet in Enjoy Town.`
+  },
+  location: {
+    label: "Location",
+    fields: [
+      { key:"type", label:"Type of place", hint:"pick one", max:1, options:[
+        "lantern-lit night market stall", "half-abandoned rooftop garden",
+        "basement arcade that never quite closes", "cliffside shrine past the edge of town",
+        "tucked-away tailor's workshop", "all-night noodle cart by the docks",
+        "overgrown greenhouse behind the library", "tide-pool cove only locals know how to reach"
+      ]},
+      { key:"atmosphere", label:"Atmosphere", hint:"pick one", max:1, options:[
+        "warm and a little too quiet", "buzzing with regulars who all know each other",
+        "beautiful in a way that feels slightly haunted", "cramped, cluttered, and completely alive",
+        "eerily calm right before something happens", "sun-faded and nostalgic",
+        "loud, chaotic, and somehow comforting", "the kind of place secrets get traded"
+      ]},
+      { key:"secret", label:"Secret detail", hint:"pick one", max:1, options:[
+        "a locked door nobody admits to noticing", "a regular who never orders anything and never leaves",
+        "graffiti that changes overnight", "a drawer of unclaimed letters going back years",
+        "a staff member who isn't quite what they seem", "a song that plays only at closing time",
+        "a wall of photos with one face scratched out", "a trapdoor under the floorboards"
+      ]}
+    ],
+    template: (v) => `A ${v.type} in Enjoy Town with a ${v.atmosphere} atmosphere. Hidden detail: ${v.secret}. Describe the sights, sounds, and one object here that only regulars know about.`
+  },
+  pet: {
+    label: "Pet",
+    fields: [
+      { key:"species", label:"Species", hint:"pick one", max:1, options:[
+        "moon-marked fox", "storm-feathered hawk", "ember-tailed hare",
+        "tide otter with a taste for trouble", "cloud-soft cat that's colder than it looks",
+        "quiet little owl-lizard hybrid", "pocket-sized dragon, mostly harmless",
+        "spark-tailed squirrel", "moth the size of a dinner plate, gentle as anything",
+        "small hound with a habit of finding what's lost"
+      ]},
+      { key:"traits", label:"Personality", hint:"pick up to 2", max:2, options:[
+        "fiercely protective", "chronically nosy", "surprisingly lazy",
+        "bonded for life, no exceptions", "a little too clever for its own good",
+        "skittish around strangers, bold with you", "loud about everything", "quietly always nearby"
+      ]},
+      { key:"special", label:"Special trait", hint:"pick one", max:1, options:[
+        "can sense when its owner is lying", "glows faintly when it's nervous",
+        "only eats food it's stolen itself", "has a habit of showing up exactly when needed",
+        "remembers every person it's ever met", "can't be photographed properly, ever",
+        "hums when it's happy, off-key", "leaves small gifts nobody asked for"
+      ]}
+    ],
+    template: (v) => `A ${v.species} companion, ${v.traits.join(" and ")}. Special trait: ${v.special}. Give it a name, a signature habit, and a way it reacts when its owner is upset.`
+  },
+  scenario: {
+    label: "Scenario",
+    fields: [
+      { key:"setting", label:"Setting", hint:"pick one", max:1, options:[
+        "crowded festival night in Enjoy Town", "rain-soaked alley behind the main square",
+        "empty AI Town train platform after midnight", "rooftop overlooking the whole town",
+        "back room of a shop that's officially closed", "riverside dock at first light",
+        "packed noodle bar during a blackout", "quiet library after closing"
+      ]},
+      { key:"moment", label:"Inciting moment", hint:"pick one", max:1, options:[
+        "a stranger sits down uninvited and orders for both of us",
+        "we both reach for the same lost object at once",
+        "an old argument resurfaces out of nowhere",
+        "someone mistakes me for a person I'm not",
+        "the lights go out and neither of us moves",
+        "a note gets slipped into my pocket by accident",
+        "we're the only two who show up to something",
+        "a secret slips out before either of us means it to"
+      ]},
+      { key:"tone", label:"Tone", hint:"pick one", max:1, options:[
+        "slow-burn and tender", "tense, with something unsaid", "playful, teasing, a little reckless",
+        "quietly melancholy", "urgent, almost breathless", "warm and a little funny"
+      ]},
+      { key:"stakes", label:"Stakes", hint:"pick one", max:1, options:[
+        "low — just two people figuring each other out", "a friendship on the line",
+        "a secret that could change everything if it gets out", "a choice that can't be undone once it's made",
+        "trust, rebuilt or broken for good", "nothing dramatic, just the truth, finally"
+      ]}
+    ],
+    template: (v) => `Setting: a ${v.setting}. Inciting moment: ${v.moment}. Tone: ${v.tone}. Stakes: ${v.stakes}. Open the scene in medias res — mid-action or mid-conversation — and let my character's first line reveal what they want.`
+  },
+  messages: {
+    label: "Messages",
+    fields: [
+      { key:"relationship", label:"Who you're messaging", hint:"pick one", max:1, options:[
+        "someone you just matched with", "someone you've been talking to for weeks",
+        "an old rival", "a childhood friend reconnecting",
+        "someone you have a crush on and won't admit it", "your go-to companion after a long day"
+      ]},
+      { key:"type", label:"Message type", hint:"pick one", max:1, options:[
+        "icebreaker", "playful tease", "late-night vulnerable check-in",
+        "dare or challenge", "overdue apology", "random unprompted thought"
+      ]},
+      { key:"tone", label:"Tone", hint:"pick one", max:1, options:[
+        "flirty", "casual and warm", "deadpan funny",
+        "a little too honest", "guarded, holding back", "soft and nervous"
+      ]}
+    ],
+    template: (v) => {
+      const toneIndex = TONE_ORDER.indexOf(v.tone);
+      const line = MESSAGE_LINES[v.type][toneIndex];
+      const article = /^[aeiou]/i.test(v.type) ? "an" : "a";
+      return `Context: messaging ${v.relationship}, going for ${article} ${v.tone} ${v.type}.\n\nSend:\n"${line}"`;
+    }
+  },
+  romance: {
+    label: "Romance",
+    fields: [
+      { key:"dynamic", label:"Dynamic", hint:"pick one", max:1, options:[
+        "just met and can't stop noticing each other",
+        "friends who've never said the quiet part out loud",
+        "rivals whose arguments keep turning into something else",
+        "reunited after years apart",
+        "one of them already knows, the other hasn't caught on yet",
+        "together, but something's gone unspoken too long"
+      ]},
+      { key:"tension", label:"Tension", hint:"pick one", max:1, options:[
+        "a look that lasts a beat too long", "an almost-touch neither of them mentions",
+        "a confession that gets interrupted", "jealousy neither will admit to",
+        "proximity that suddenly feels loaded", "a memory that resurfaces at the worst time"
+      ]},
+      { key:"tone", label:"Tone", hint:"pick one", max:1, options:[
+        "slow-burn and tender", "charged and unresolved", "playful, teetering into something more",
+        "quietly aching", "nervous, first-time honesty", "warm and comfortable, but with an edge"
+      ]},
+      { key:"stakes", label:"What's at risk", hint:"pick one", max:1, options:[
+        "a friendship that's never been tested like this", "years of pretending it wasn't there",
+        "the timing being all wrong", "one of them leaving soon",
+        "a promise made to someone else", "just the fear of saying it out loud"
+      ]}
+    ],
+    template: (v) => `Dynamic: ${v.dynamic}. Tension: ${v.tension}. Tone: ${v.tone}. What's at risk: ${v.stakes}. Write the scene without naming the feeling outright — let it show in what's said around it, not in a confession. End right before either of them says too much.`
+  }
+};
+
+const TONE_ORDER = ["flirty", "casual and warm", "deadpan funny", "a little too honest", "guarded, holding back", "soft and nervous"];
+
+const MESSAGE_LINES = {
+  "icebreaker": [
+    "Okay be honest — was that a coincidence or did you plan on running into me?",
+    "Hey, random thought — what's the best thing that happened to you today?",
+    "Quick poll: is it socially acceptable to message this early or did I just commit a crime.",
+    "I've been trying to think of something clever to say and I've got nothing, so — hi.",
+    "Hey. Wasn't sure if I should message first, but here we are.",
+    "Hi — sorry if this is out of nowhere, I just wanted to say hey."
+  ],
+  "playful tease": [
+    "You're going to pretend you didn't see that message read receipt, aren't you.",
+    "You're in a weirdly good mood today. Suspicious.",
+    "I've decided you're my favorite problem to have.",
+    "You're kind of impossible to stay annoyed at, and it's very inconvenient.",
+    "Don't let it go to your head, but that was actually kind of funny.",
+    "Okay that made me laugh way more than I want to admit."
+  ],
+  "late-night vulnerable check-in": [
+    "Can't sleep and you're the only person I wanted to bother about it.",
+    "Hey, you still up? No real reason, just wanted to talk.",
+    "3am thoughts hit different when there's no one around to judge them out loud.",
+    "Can I say something and you don't make it weird?",
+    "Not gonna get into it, but today was a lot. Just wanted to say something.",
+    "Sorry to message this late — I just didn't want to be alone with my thoughts right now."
+  ],
+  "dare or challenge": [
+    "I dare you to tell me the truth for once.",
+    "Bet you can't beat me at whatever you're best at. Prove it.",
+    "I dare you to send the next message without a single joke in it. You'll fail.",
+    "Dare you to actually answer the question this time instead of deflecting.",
+    "Dare you to guess what I'm thinking right now. You won't get it.",
+    "This is silly, but — dare you to tell me one thing you've never told anyone."
+  ],
+  "overdue apology": [
+    "Okay, I owe you an apology and I'm bad at these, so bear with me.",
+    "Hey, I've been meaning to say sorry about earlier. That was on me.",
+    "I rehearsed this apology in my head like four times and it's still going to come out wrong.",
+    "I should've said this days ago — I'm sorry, and I mean it.",
+    "Not great at apologies, but I know I owe you one.",
+    "I've been putting this off because I didn't know how to say it, but — I'm sorry."
+  ],
+  "random unprompted thought": [
+    "Random, but you crossed my mind and I didn't hate it.",
+    "Random thought — what would you do with a completely free day?",
+    "Unrelated, but I just remembered something embarrassing from three years ago and now I'm suffering alone.",
+    "Random, but I think about our last conversation more than I'd like to admit.",
+    "No context, just — thinking about you today.",
+    "This is random, sorry — just wanted to say hi, no real reason."
+  ]
+};
+
+const state = {};
+let activeCategory = "character";
+
+for (const cat in DATA) {
+  state[cat] = {};
+  DATA[cat].fields.forEach(f => state[cat][f.key] = []);
+}
+
+function pickRandom(options, n){
+  const pool = [...options];
+  const picked = [];
+  for (let i=0; i<n && pool.length; i++){
+    const idx = Math.floor(Math.random()*pool.length);
+    picked.push(pool.splice(idx,1)[0]);
+  }
+  return picked;
+}
+
+function buildTabs(){
+  const tabsEl = document.getElementById("tabs");
+  tabsEl.innerHTML = "";
+  Object.keys(DATA).forEach(cat => {
+    const btn = document.createElement("button");
+    btn.textContent = DATA[cat].label;
+    btn.className = cat === activeCategory ? "active" : "";
+    btn.addEventListener("click", () => {
+      activeCategory = cat;
+      buildTabs();
+      buildPanels();
+      renderOutputForCategory(cat, false);
+    });
+    tabsEl.appendChild(btn);
+  });
+}
+
+function buildPanels(){
+  const panelsEl = document.getElementById("panels");
+  panelsEl.innerHTML = "";
+  Object.keys(DATA).forEach(cat => {
+    const panel = document.createElement("div");
+    panel.className = "panel" + (cat === activeCategory ? " active" : "");
+    panel.id = "panel-" + cat;
+
+    DATA[cat].fields.forEach(field => {
+      const fieldEl = document.createElement("div");
+      fieldEl.className = "field";
+
+      const head = document.createElement("div");
+      head.className = "field-head";
+      head.innerHTML = `<span class="label">${field.label}</span><span class="hint">${field.hint}</span>`;
+      fieldEl.appendChild(head);
+
+      const chipsEl = document.createElement("div");
+      chipsEl.className = "chips";
+
+      field.options.forEach(opt => {
+        const chip = document.createElement("button");
+        chip.type = "button";
+        chip.className = "chip";
+        chip.textContent = opt;
+        if (state[cat][field.key].includes(opt)) chip.classList.add("active");
+
+        chip.addEventListener("click", () => {
+          const sel = state[cat][field.key];
+          const i = sel.indexOf(opt);
+          if (i > -1){
+            sel.splice(i,1);
+          } else {
+            if (field.max === 1){
+              sel.length = 0;
+              sel.push(opt);
+            } else if (sel.length < field.max){
+              sel.push(opt);
+            } else {
+              return;
+            }
+          }
+          chipsEl.querySelectorAll(".chip").forEach(c => {
+            c.classList.toggle("active", sel.includes(c.textContent));
+          });
+        });
+
+        chipsEl.appendChild(chip);
+      });
+
+      fieldEl.appendChild(chipsEl);
+      panel.appendChild(fieldEl);
+    });
+
+    panelsEl.appendChild(panel);
+  });
+}
+
+function fillGaps(cat, randomizeAll){
+  const cfg = DATA[cat];
+  const values = {};
+  cfg.fields.forEach(field => {
+    let sel = state[cat][field.key];
+    if (randomizeAll || sel.length === 0){
+      const count = field.max === 1 ? 1 : Math.max(2, Math.min(field.max, 2));
+      sel = pickRandom(field.options, field.max === 1 ? 1 : count);
+      state[cat][field.key] = sel;
+    }
+    values[field.key] = field.max === 1 ? sel[0] : sel;
+  });
+  return values;
+}
+
+function renderOutputForCategory(cat, generateIfEmpty){
+  const output = document.getElementById("output");
+  const cfg = DATA[cat];
+  const hasAny = cfg.fields.some(f => state[cat][f.key].length > 0);
+  if (!hasAny && !generateIfEmpty){
+    output.textContent = "Pick a few details above, or hit Surprise me — your prompt will show up here.";
+    output.classList.add("empty");
+    return;
+  }
+}
+
+function refreshChipDisplay(){
+  buildPanels();
+}
+
+function generate(cat, randomizeAll){
+  const values = fillGaps(cat, randomizeAll);
+  refreshChipDisplay();
+  const text = DATA[cat].template(values);
+  const output = document.getElementById("output");
+  output.textContent = text;
+  output.classList.remove("empty");
+}
+
+document.getElementById("generateBtn").addEventListener("click", () => {
+  generate(activeCategory, false);
+});
+
+document.getElementById("surpriseBtn").addEventListener("click", () => {
+  Object.keys(DATA[activeCategory].fields).forEach(() => {});
+  DATA[activeCategory].fields.forEach(f => state[activeCategory][f.key] = []);
+  generate(activeCategory, true);
+});
+
+document.getElementById("copyBtn").addEventListener("click", () => {
+  const text = document.getElementById("output").textContent;
+  const btn = document.getElementById("copyBtn");
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = "Copied";
+    btn.classList.add("copied");
+    setTimeout(() => { btn.textContent = "Copy"; btn.classList.remove("copied"); }, 1400);
+  }).catch(() => {
+    btn.textContent = "Select & copy manually";
+    setTimeout(() => { btn.textContent = "Copy"; }, 2000);
+  });
+});
+
+buildTabs();
+buildPanels();
+</script>
+</body>
+</html>
