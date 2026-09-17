@@ -455,6 +455,110 @@ const DATA = {
     ],
     template: (v) => `Dynamic: ${v.dynamic}. Tension: ${v.tension}. Tone: ${v.tone}. What's at risk: ${v.stakes}. Write the scene without naming the feeling outright — let it show in what's said around it, not in a confession. End right before either of them says too much.`
   },
+  flaws: {
+    label: "Flaws",
+    fields: [
+      { key:"traits", label:"Core flaws", hint:"pick up to 3", max:3, options:[
+        "quick to shut people out when hurt", "can't apologize without deflecting first",
+        "picks fights instead of asking for help", "holds grudges long after they've stopped mattering",
+        "avoids vulnerability with jokes", "controlling when scared",
+        "says yes when they mean no", "runs from good things out of habit",
+        "competitive to the point of pettiness", "trusts too fast, then overcorrects"
+      ]},
+      { key:"showsUp", label:"How it shows up", hint:"pick one", max:1, options:[
+        "goes quiet and distant instead of talking it out", "gets sharp-tongued the moment they feel exposed",
+        "overcorrects by trying to control everything around them", "picks a fight to avoid saying what's actually wrong",
+        "disappears for a while, then acts like nothing happened", "overexplains and apologizes for things that don't need one"
+      ]},
+      { key:"trigger", label:"What sets it off", hint:"pick one", max:1, options:[
+        "feeling like they're an afterthought", "being told what to do",
+        "getting too close to someone too fast", "having their kindness mistaken for weakness",
+        "being reminded of who they used to be", "silence they can't read"
+      ]}
+    ],
+    template: (v) => `Flaws: ${v.traits.join(", ")}. When it surfaces, they ${v.showsUp}. It's usually set off by ${v.trigger}. Write these in as real friction, not a quirk that gets fixed by act two.`
+  },
+  style: {
+    label: "Conv. Style",
+    fields: [
+      { key:"pacing", label:"Pacing", hint:"pick one", max:1, options:[
+        "short replies, makes you work for the long ones", "rambles when comfortable, clipped when not",
+        "measured and deliberate, never rushed", "fast and overlapping, finishes your sentences",
+        "long messages broken into several texts", "matches whatever pace you set"
+      ]},
+      { key:"humor", label:"Humor", hint:"pick one", max:1, options:[
+        "dry, deadpan, easy to miss", "self-deprecating more than they should be",
+        "chaotic and a little unhinged", "dad-joke sincere, no shame about it",
+        "sharp and a little mean, only to people they like", "rare, but devastating when it lands"
+      ]},
+      { key:"directness", label:"Directness", hint:"pick one", max:1, options:[
+        "says exactly what they mean, no cushioning", "circles an idea for a while before landing on it",
+        "blunt about facts, guarded about feelings", "asks questions instead of stating opinions",
+        "hedges everything, reads between their own lines", "brutally honest, apologizes for it later"
+      ]},
+      { key:"quirks", label:"Speech quirks", hint:"pick up to 2", max:2, options:[
+        "trails off mid-sentence when unsure", "repeats your name when they're serious",
+        "uses old-fashioned phrases nobody else says anymore", "answers questions with questions",
+        "narrates what they're doing while doing it", "goes quiet right before saying something honest",
+        "over-punctuates when excited", "switches topics without warning when uncomfortable"
+      ]}
+    ],
+    template: (v) => `Pacing: ${v.pacing}. Humor: ${v.humor}. Directness: ${v.directness}. Speech quirks: ${v.quirks.join(", ")}. Let this shape how every line reads, not just what's said.`
+  },
+  traits: {
+    label: "Adv. Traits",
+    fields: [
+      { key:"drive", label:"Core drive", hint:"pick one", max:1, options:[
+        "proving they don't need anyone, while quietly needing someone", "being the one who's never left behind again",
+        "outrunning a reputation they didn't choose", "protecting people who never asked to be protected",
+        "being remembered for something other than one mistake", "earning a place they don't fully believe they deserve"
+      ]},
+      { key:"fear", label:"Deepest fear", hint:"pick one", max:1, options:[
+        "being known completely and left anyway", "turning into someone from their past",
+        "being ordinary", "finding out the people who love them are wrong to",
+        "being needed and failing at it", "running out of time to become who they meant to be"
+      ]},
+      { key:"contradiction", label:"Core contradiction", hint:"pick one", max:1, options:[
+        "craves closeness, sabotages it the second it's offered", "gives advice they'd never take themselves",
+        "fearless in public, terrified alone", "obsessed with control, drawn to people who ignore it",
+        "soft underneath, armored on purpose", "wants to be chosen, refuses to ask"
+      ]},
+      { key:"coping", label:"Coping mechanism", hint:"pick one", max:1, options:[
+        "works until there's no room left to feel anything", "makes it funny before anyone else can",
+        "gets busy taking care of someone else instead", "goes somewhere and doesn't tell anyone",
+        "picks a fight with something easier than the real problem", "rehearses the conversation they're too scared to have"
+      ]}
+    ],
+    template: (v) => `Core drive: ${v.drive}. Deepest fear: ${v.fear}. Contradiction: ${v.contradiction}. Coping mechanism: ${v.coping}. These should leak out sideways — through choices and reactions, not exposition.`
+  },
+  backstory: {
+    label: "Backstory",
+    fields: [
+      { key:"origin", label:"Where they come from", hint:"pick one", max:1, options:[
+        "grew up in a house where love was conditional on performance", "raised by someone else's family after their own fell apart",
+        "came from money and walked away from all of it", "the only one of their siblings who stayed",
+        "grew up moving constantly, never unpacked all the way", "raised to take care of everyone but themselves",
+        "came up through a world most people romanticize and few survive", "grew up ordinary, and it's the thing they least talk about"
+      ]},
+      { key:"turningPoint", label:"Turning point", hint:"pick one", max:1, options:[
+        "a betrayal by the person they trusted most", "a loss they still haven't fully processed",
+        "a chance they took that cost them everything and was worth it anyway", "a moment they chose themselves for the first time, at a real cost",
+        "getting the thing they always wanted and realizing it wasn't enough", "a mistake that changed how everyone saw them, including themselves",
+        "the day they finally left", "a promise they made and somehow kept, against the odds"
+      ]},
+      { key:"relToPast", label:"Relationship to it now", hint:"pick one", max:1, options:[
+        "doesn't talk about it unless it comes up sideways", "has made peace with most of it, not all of it",
+        "still lying to themselves about how much it shaped them", "uses it as a cautionary tale for everyone but themselves",
+        "carries it quietly, lets very few people see the weight", "has rebuilt themselves so many times the past feels like someone else's"
+      ]},
+      { key:"currentGoal", label:"What they want now", hint:"pick one", max:1, options:[
+        "a life that's actually theirs, not inherited or assigned", "one relationship they don't have to earn every day",
+        "to stop proving themselves and just exist", "to finally finish something they keep almost finishing",
+        "a version of home that doesn't come with conditions", "to be known by someone without having to perform first"
+      ]}
+    ],
+    template: (v) => `Backstory: ${v.origin}. Turning point: ${v.turningPoint}. Their relationship to it now: ${v.relToPast}. What they want in the present: ${v.currentGoal}. Write this as history that shapes behavior, not a monologue they'd actually deliver — let it surface in what they avoid, not what they announce.`
+  },
   replies: {
     label: "Reply Helper",
     custom: true
