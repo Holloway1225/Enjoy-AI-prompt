@@ -244,6 +244,14 @@
     margin-bottom:6px;
   }
 
+  .char-count{
+    font-size:12px;
+    color:var(--ink-dim);
+    margin-top:8px;
+    text-align:right;
+    display:none;
+  }
+
   footer{
     margin-top:30px;
     font-size:12.5px;
@@ -285,6 +293,7 @@
     <div class="output-label">Ready to paste into Enjoy</div>
     <div class="output-card empty" id="output">Pick a few details above, or hit Surprise me — your prompt will show up here.</div>
     <button class="copy-btn" id="copyBtn">Copy</button>
+    <div class="char-count" id="charCount"></div>
   </div>
 
   <footer>Works for character bios, world/location descriptions, pet companions, and scene-starter prompts. Nothing here is saved — refresh and it resets.</footer>
@@ -457,53 +466,50 @@ const DATA = {
   },
   flaws: {
     label: "Flaws",
+    maxLen: 150,
     fields: [
-      { key:"traits", label:"Core flaws", hint:"pick up to 3", max:3, options:[
-        "quick to shut people out when hurt", "can't apologize without deflecting first",
-        "picks fights instead of asking for help", "holds grudges long after they've stopped mattering",
-        "avoids vulnerability with jokes", "controlling when scared",
-        "says yes when they mean no", "runs from good things out of habit",
-        "competitive to the point of pettiness", "trusts too fast, then overcorrects"
-      ]},
-      { key:"showsUp", label:"How it shows up", hint:"pick one", max:1, options:[
-        "goes quiet and distant instead of talking it out", "gets sharp-tongued the moment they feel exposed",
-        "overcorrects by trying to control everything around them", "picks a fight to avoid saying what's actually wrong",
-        "disappears for a while, then acts like nothing happened", "overexplains and apologizes for things that don't need one"
+      { key:"traits", label:"Core flaws", hint:"pick up to 2", max:2, options:[
+        "shuts people out when hurt", "can't apologize without deflecting",
+        "picks fights instead of asking for help", "holds grudges long after they matter",
+        "controlling when scared", "says yes when they mean no",
+        "runs from good things out of habit", "petty when competitive",
+        "trusts too fast, then overcorrects", "avoids vulnerability with jokes"
       ]},
       { key:"trigger", label:"What sets it off", hint:"pick one", max:1, options:[
-        "feeling like they're an afterthought", "being told what to do",
-        "getting too close to someone too fast", "having their kindness mistaken for weakness",
-        "being reminded of who they used to be", "silence they can't read"
+        "feeling like an afterthought", "being told what to do",
+        "getting close too fast", "kindness mistaken for weakness",
+        "being reminded of their past", "silence they can't read"
       ]}
     ],
-    template: (v) => `Flaws: ${v.traits.join(", ")}. When it surfaces, they ${v.showsUp}. It's usually set off by ${v.trigger}. Write these in as real friction, not a quirk that gets fixed by act two.`
+    template: (v) => `${v.traits.join(", ")}. Triggered by ${v.trigger}.`
   },
   style: {
     label: "Conv. Style",
+    maxLen: 200,
     fields: [
       { key:"pacing", label:"Pacing", hint:"pick one", max:1, options:[
-        "short replies, makes you work for the long ones", "rambles when comfortable, clipped when not",
-        "measured and deliberate, never rushed", "fast and overlapping, finishes your sentences",
-        "long messages broken into several texts", "matches whatever pace you set"
+        "short replies, long ones earned", "rambles when comfy, clipped when not",
+        "measured, never rushed", "fast, finishes your sentences",
+        "long messages, several texts", "matches your pace"
       ]},
       { key:"humor", label:"Humor", hint:"pick one", max:1, options:[
-        "dry, deadpan, easy to miss", "self-deprecating more than they should be",
-        "chaotic and a little unhinged", "dad-joke sincere, no shame about it",
-        "sharp and a little mean, only to people they like", "rare, but devastating when it lands"
+        "dry, deadpan, easy to miss", "self-deprecating",
+        "chaotic, a little unhinged", "sincere dad-joke energy",
+        "sharp, a little mean, affectionately", "rare but devastating"
       ]},
       { key:"directness", label:"Directness", hint:"pick one", max:1, options:[
-        "says exactly what they mean, no cushioning", "circles an idea for a while before landing on it",
-        "blunt about facts, guarded about feelings", "asks questions instead of stating opinions",
-        "hedges everything, reads between their own lines", "brutally honest, apologizes for it later"
+        "says exactly what they mean", "circles ideas before landing",
+        "blunt on facts, guarded on feelings", "asks questions, rarely opines",
+        "hedges everything", "brutally honest, apologizes later"
       ]},
       { key:"quirks", label:"Speech quirks", hint:"pick up to 2", max:2, options:[
-        "trails off mid-sentence when unsure", "repeats your name when they're serious",
-        "uses old-fashioned phrases nobody else says anymore", "answers questions with questions",
-        "narrates what they're doing while doing it", "goes quiet right before saying something honest",
-        "over-punctuates when excited", "switches topics without warning when uncomfortable"
+        "trails off when unsure", "repeats your name when serious",
+        "uses old-fashioned phrases", "answers questions with questions",
+        "narrates their own actions", "goes quiet before honesty",
+        "over-punctuates when excited", "changes topics when uncomfortable"
       ]}
     ],
-    template: (v) => `Pacing: ${v.pacing}. Humor: ${v.humor}. Directness: ${v.directness}. Speech quirks: ${v.quirks.join(", ")}. Let this shape how every line reads, not just what's said.`
+    template: (v) => `${v.pacing}. ${v.humor}. ${v.directness}. Quirks: ${v.quirks.join(", ")}.`
   },
   traits: {
     label: "Adv. Traits",
@@ -533,6 +539,7 @@ const DATA = {
   },
   backstory: {
     label: "Backstory",
+    maxLen: 999,
     fields: [
       { key:"origin", label:"Where they come from", hint:"pick one", max:1, options:[
         "grew up in a house where love was conditional on performance", "raised by someone else's family after their own fell apart",
@@ -558,6 +565,35 @@ const DATA = {
       ]}
     ],
     template: (v) => `Backstory: ${v.origin}. Turning point: ${v.turningPoint}. Their relationship to it now: ${v.relToPast}. What they want in the present: ${v.currentGoal}. Write this as history that shapes behavior, not a monologue they'd actually deliver — let it surface in what they avoid, not what they announce.`
+  },
+  clothing: {
+    label: "Clothing",
+    maxLen: 400,
+    fields: [
+      { key:"style", label:"Overall style", hint:"pick one", max:1, options:[
+        "sharp tailored streetwear", "worn leather and denim",
+        "soft pastel cottagecore", "sleek all-black minimalist",
+        "vintage thrifted eclectic", "punk academia",
+        "athletic loungewear, always half put-together", "ornate, a little too formal for the occasion"
+      ]},
+      { key:"palette", label:"Color palette", hint:"pick one", max:1, options:[
+        "all black, no exceptions", "warm earth tones",
+        "muted greys and navy", "one bold accent color against neutrals",
+        "soft pastels", "clashing colors that somehow work"
+      ]},
+      { key:"accessory", label:"Signature piece", hint:"pick one", max:1, options:[
+        "a piece of jewelry they never take off", "scuffed boots that have seen everything",
+        "a jacket that isn't technically theirs", "fingerless gloves",
+        "an old watch that doesn't run anymore", "a scarf regardless of weather",
+        "glasses they don't need but wear anyway", "a bag full of things nobody else would carry"
+      ]},
+      { key:"fit", label:"Fit / silhouette", hint:"pick one", max:1, options:[
+        "oversized, borrowed-looking", "fitted and deliberate",
+        "layered, ready to peel off or bundle up", "effortless, like they didn't try",
+        "structured, almost armor-like", "mismatched on purpose"
+      ]}
+    ],
+    template: (v) => `${v.style}. Palette: ${v.palette}. Signature piece: ${v.accessory}. Fit: ${v.fit}.`
   },
   replies: {
     label: "Reply Helper",
@@ -878,14 +914,33 @@ function updateChipStates(cat){
   });
 }
 
+function truncateToLimit(text, max){
+  if (text.length <= max) return text;
+  let cut = text.slice(0, max - 1);
+  const lastSpace = cut.lastIndexOf(" ");
+  if (lastSpace > 0) cut = cut.slice(0, lastSpace);
+  return cut + "…";
+}
+
 function generate(cat, randomizeAll){
   if (DATA[cat].custom) return;
   const values = fillGaps(cat, randomizeAll);
   updateChipStates(cat);
-  const text = DATA[cat].template(values);
+  let text = DATA[cat].template(values);
+  const maxLen = DATA[cat].maxLen;
+  if (maxLen) text = truncateToLimit(text, maxLen);
   const output = document.getElementById("output");
   output.textContent = text;
   output.classList.remove("empty");
+
+  const counter = document.getElementById("charCount");
+  if (maxLen){
+    counter.textContent = `${text.length} / ${maxLen} characters`;
+    counter.style.display = "block";
+  } else {
+    counter.textContent = "";
+    counter.style.display = "none";
+  }
 }
 
 document.getElementById("generateBtn").addEventListener("click", () => {
